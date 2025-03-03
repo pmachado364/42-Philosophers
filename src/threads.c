@@ -1,0 +1,125 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   threads.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/26 10:43:14 by pmachado          #+#    #+#             */
+/*   Updated: 2025/02/26 15:47:01 by pmachado         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "philo.h"
+
+int	start_threads(t_table *table)
+{
+	int			i;
+	pthread_t	monitor_thread;
+	
+	i = 0;
+	while (i < table->nbr_thinkers)
+	{
+		if (pthread_create(&table->bigbrains[i].thread, NULL,
+			philo_behavior, (void *)&table->bigbrains[i]) != 0)
+		{
+			printf("❌ Failed to create thread for philosopher %d\n", i + 1);
+			return (1);
+		}
+		printf("✅ Thread created for philosopher %d\n", i + 1);
+		i++;
+	}
+
+	// ✅ Start monitor thread and detach it
+	if (pthread_create(&monitor_thread, NULL, check_philos, (void *)table) != 0)
+	{
+		printf("❌ Failed to create monitoring thread\n");
+		return (1);
+	}
+	pthread_detach(monitor_thread); // ✅ Detach so it cleans itself up when done
+
+	// ✅ Wait for philosopher threads to finish
+	i = 0;
+	while (i < table->nbr_thinkers)
+	{
+		pthread_join(table->bigbrains[i].thread, NULL);
+		i++;
+	}
+	return (0);
+}
+
+void	join_threads(t_table *table)
+{
+	int	i;
+
+	i = 0;
+	while (i < table->nbr_thinkers)
+	{
+		pthread_join(table->bigbrains[i].thread, NULL);
+		i++;
+	}
+}
+
+void	*check_philos(void *arg)
+{
+	t_table		*table = (t_table *)arg;
+	int			i;
+	uint64_t	now, time_since_last_meal;
+	static uint64_t last_log_time = 0;
+
+	while (1)
+	{
+		pthread_mutex_lock(&table->mtx_simulation);
+		if (table->someone_died)
+		{
+			pthread_mutex_unlock(&table->mtx_simulation);
+			return (NULL);
+		}
+		pthread_mutex_unlock(&table->mtx_simulation);
+
+		now = current_time_ms();
+		if (now - last_log_time >= 10)
+		{
+			last_log_time = now;
+			printf("[%lu] 🔍 Monitoring philosophers...\n", now);
+		}
+
+		i = 0;
+		while (i < table->nbr_thinkers)
+		{
+			pthread_mutex_lock(&table->bigbrains[i].mtx_last_meal_time);
+			uint64_t last_meal = table->bigbrains[i].last_meal_time;
+			pthread_mutex_unlock(&table->bigbrains[i].mtx_last_meal_time);
+
+			if (now < last_meal) // ✅ Prevents invalid time calculations
+				time_since_last_meal = 0;
+			else
+				time_since_last_meal = now - last_meal;
+
+			if (time_since_last_meal > (uint64_t)table->time_to_die)
+			{
+				pthread_mutex_lock(&table->mtx_simulation);
+				table->someone_died = true;
+				pthread_mutex_unlock(&table->mtx_simulation);
+				printf("[%lu] 💀 Philosopher %d has died after %lu ms without eating.\n",
+					now, table->bigbrains[i].id, time_since_last_meal);
+				return (NULL);
+			}
+			i++;
+		}
+
+		// ✅ Update current_turn safely in monitor thread
+		pthread_mutex_lock(&table->mtx_simulation);
+		table->current_turn = (table->current_turn % table->nbr_thinkers) + 1;
+		pthread_mutex_unlock(&table->mtx_simulation);
+
+		usleep(200);
+	}
+	return (NULL);
+}
+
+
+
+
+
+
