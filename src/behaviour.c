@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 09:48:33 by pmachado          #+#    #+#             */
-/*   Updated: 2025/02/26 15:47:32 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/03/03 20:18:38 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,34 +54,6 @@ void	philo_think(t_bigbrain *ph)
 	usleep(500);
 }
 
-// void	philo_eat(t_bigbrain *ph)
-// {
-// 	pthread_mutex_lock(ph->left_fork);
-// 	printf("[%lu] 🍴 Philosopher %d took the left fork\n", current_time_ms(), ph->id);
-
-// 	// ✅ Check if right fork is available before taking it
-// 	if (pthread_mutex_trylock(ph->right_fork) != 0)
-// 	{
-// 		pthread_mutex_unlock(ph->left_fork); // ✅ Release left fork if right fork is not available
-// 		printf("[%lu] 🤔 Philosopher %d is thinking (couldn't grab second fork)\n", current_time_ms(), ph->id);
-// 		usleep(1000); // ✅ Small delay to avoid tight loops
-// 		return; 
-// 	}
-
-// 	printf("[%lu] 🍴 Philosopher %d took the right fork\n", current_time_ms(), ph->id);
-
-// 	// ✅ Update last meal time before eating
-// 	pthread_mutex_lock(&ph->mtx_last_meal_time);
-// 	ph->last_meal_time = current_time_ms();
-// 	pthread_mutex_unlock(&ph->mtx_last_meal_time);
-
-// 	printf("[%lu] 🍝 Philosopher %d is eating.\n", current_time_ms(), ph->id);
-// 	usleep(ph->table->time_to_eat * 800); // ✅ Slightly reduce eating time
-
-// 	pthread_mutex_unlock(ph->right_fork);
-// 	pthread_mutex_unlock(ph->left_fork);
-// }
-
 void	philo_eat(t_bigbrain *ph)
 {
 	if (ph->table->nbr_thinkers > 2)
@@ -98,7 +70,6 @@ void	philo_eat(t_bigbrain *ph)
 			usleep(500);
 		}
 	}
-
 	if (ph->id % 2 == 0)
 	{
 		pthread_mutex_lock(ph->right_fork);
@@ -111,7 +82,6 @@ void	philo_eat(t_bigbrain *ph)
 		printf("[%lu] 🍴 Philosopher %d took the left fork\n", current_time_ms(), ph->id);
 		pthread_mutex_lock(ph->right_fork);
 	}
-
 	pthread_mutex_lock(&ph->mtx_last_meal_time);
 	ph->last_meal_time = current_time_ms();
 	pthread_mutex_unlock(&ph->mtx_last_meal_time);
