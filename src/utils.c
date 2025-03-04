@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 10:32:09 by pmachado          #+#    #+#             */
-/*   Updated: 2025/02/26 14:47:15 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/03/04 13:53:08 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,11 @@ uint64_t	current_time_ms(void)
 
 bool	philo_check_death(t_bigbrain *ph)
 {
-	bool status;
+	bool	status;
 
 	pthread_mutex_lock(&ph->table->mtx_simulation);
 	status = ph->table->someone_died;
 	pthread_mutex_unlock(&ph->table->mtx_simulation);
-
 	return (status);
 }
 
@@ -50,23 +49,19 @@ bool	philo_take_forks(t_bigbrain *ph)
 {
 	pthread_mutex_lock(ph->left_fork);
 	printf("🍴 Philosopher %d took the left fork\n", ph->id);
-
 	if (philo_check_death(ph))
 	{
 		pthread_mutex_unlock(ph->left_fork);
 		return (false);
 	}
-
 	pthread_mutex_lock(ph->right_fork);
 	printf("🍴 Philosopher %d took the right fork\n", ph->id);
-
 	if (philo_check_death(ph))
 	{
 		pthread_mutex_unlock(ph->left_fork);
 		pthread_mutex_unlock(ph->right_fork);
 		return (false);
 	}
-
 	return (true);
 }
 
@@ -75,16 +70,3 @@ void	philo_drop_forks(t_bigbrain *ph)
 	pthread_mutex_unlock(ph->left_fork);
 	pthread_mutex_unlock(ph->right_fork);
 }
-
-void	wait_for(t_bigbrain *ph, uint64_t time_to_wait)
-{
-	uint64_t	start_time = current_time_ms();
-	while ((current_time_ms() - start_time) < time_to_wait)
-	{
-		if (philo_check_death(ph))
-			break;
-		usleep(100); // ✅ Small delay to avoid busy looping
-	}
-}
-
-

@@ -6,19 +6,18 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/14 18:25:05 by pmachado          #+#    #+#             */
-/*   Updated: 2025/02/26 15:29:14 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/03/04 13:49:32 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
 
 t_table	*ft_start_dinner(int ac, char **av)
 {
 	t_table	*table;
 
 	table = ft_init_table(ac, av);
-	if(!table)
+	if (!table)
 		ft_end(3, NULL);
 	ft_init_forks(table);
 	ft_init_philos(table);
@@ -29,7 +28,7 @@ t_table	*ft_start_dinner(int ac, char **av)
 t_table	*ft_init_table(int ac, char **av)
 {
 	t_table	*table;
-	
+
 	table = malloc(sizeof(t_table));
 	if (!table)
 		ft_end(3, NULL);
@@ -43,15 +42,10 @@ t_table	*ft_init_table(int ac, char **av)
 		table->must_eat_count = -1;
 	table->someone_died = false;
 	table->start_time = current_time_ms();
-
 	table->current_turn = 1;
 	pthread_mutex_init(&table->mtx_simulation, NULL);
-
 	table->bigbrains = NULL;
 	table->forks = NULL;
-
-	printf("\tTable set\n");
-	
 	return (table);
 }
 
@@ -70,10 +64,8 @@ void	ft_init_forks(t_table *table)
 		i++;
 	}
 	if ((pthread_mutex_init(&table->mtx_simulation, NULL))
-			|| (pthread_mutex_init(&table->mtx_prints, NULL)))
+		|| (pthread_mutex_init(&table->mtx_prints, NULL)))
 		ft_end(3, table);
-
-	printf("\tForks set.\n");
 }
 
 void	ft_init_philos(t_table *table)
@@ -90,18 +82,13 @@ void	ft_init_philos(t_table *table)
 		table->bigbrains[i].meals_eaten = 0;
 		table->bigbrains[i].last_meal_time = table->start_time;
 		table->bigbrains[i].table = table;
-		
 		table->bigbrains[i].left_fork = &table->forks[i];
-		table->bigbrains[i].right_fork = &table->forks[(i + 1) % table->nbr_thinkers];
-		
+		table->bigbrains[i].right_fork = &table->forks[(i + 1)
+			% table->nbr_thinkers];
 		if ((pthread_mutex_init(&table->bigbrains[i].mtx_last_meal_time, NULL))
 			|| (pthread_mutex_init(&table->bigbrains[i].mtx_meals_eaten, NULL)))
 			ft_end(3, table);
-		table->bigbrains[i].thread = 0; 
+		table->bigbrains[i].thread = 0;
 		i++;
 	}
-	printf("\tPhilosophers set.\n");
 }
-
-
-
