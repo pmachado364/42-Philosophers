@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/14 18:25:05 by pmachado          #+#    #+#             */
-/*   Updated: 2025/03/04 13:49:32 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/03/31 23:53:22 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,11 +60,14 @@ void	ft_init_forks(t_table *table)
 	while (i < table->nbr_thinkers)
 	{
 		if (pthread_mutex_init(&table->forks[i], NULL))
+		{
+			while (--i >= 0) // Destroy previously initialized mutexes
+				pthread_mutex_destroy(&table->forks[i]);
 			ft_end(3, table);
+		}
 		i++;
 	}
-	if ((pthread_mutex_init(&table->mtx_simulation, NULL))
-		|| (pthread_mutex_init(&table->mtx_prints, NULL)))
+	if ((pthread_mutex_init(&table->mtx_prints, NULL)))
 		ft_end(3, table);
 }
 
@@ -86,8 +89,17 @@ void	ft_init_philos(t_table *table)
 		table->bigbrains[i].right_fork = &table->forks[(i + 1)
 			% table->nbr_thinkers];
 		if ((pthread_mutex_init(&table->bigbrains[i].mtx_last_meal_time, NULL))
-			|| (pthread_mutex_init(&table->bigbrains[i].mtx_meals_eaten, NULL)))
+			|| (pthread_mutex_init(&table->bigbrains[i].mtx_meals_eaten, NULL))
+				|| (pthread_mutex_init(&table->bigbrains[i].mtx_fork_state, NULL))) // <-- ADD THIS
+		{
+			while (--i >= 0)
+			{
+				pthread_mutex_destroy(&table->bigbrains[i].mtx_last_meal_time);
+				pthread_mutex_destroy(&table->bigbrains[i].mtx_meals_eaten);
+				pthread_mutex_destroy(&table->bigbrains[i].mtx_fork_state); // <-- ALSO CLEAN IT UP
+			}
 			ft_end(3, table);
+		}
 		table->bigbrains[i].thread = 0;
 		i++;
 	}

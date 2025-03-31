@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 10:32:09 by pmachado          #+#    #+#             */
-/*   Updated: 2025/03/31 16:18:48 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/01 00:46:30 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,33 @@ uint64_t	current_time_ms(void)
 	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
 }
 
-bool	philo_check_death(t_bigbrain *ph)
+bool end_simulation(t_table *table)
 {
-	bool	status;
+	pthread_mutex_lock(&table->mtx_simulation);
+	table->someone_died = true;
+	pthread_mutex_unlock(&table->mtx_simulation);
+	return (true);
+}
 
-	pthread_mutex_lock(&ph->table->mtx_simulation);
-	status = ph->table->someone_died;
-	pthread_mutex_unlock(&ph->table->mtx_simulation);
-	return (status);
+void log_philo_status(t_table *table, int philo_id, char *status)
+{
+	uint64_t timestamp;
+	bool is_death;
+
+	// ✅ Manually compare first 4 letters to "died"
+	is_death = (status[0] == 'd' && status[1] == 'i'
+		&& status[2] == 'e' && status[3] == 'd');
+
+	pthread_mutex_lock(&table->mtx_simulation);
+	if (table->someone_died && !is_death)
+	{
+		pthread_mutex_unlock(&table->mtx_simulation);
+		return ;
+	}
+	pthread_mutex_unlock(&table->mtx_simulation);
+
+	pthread_mutex_lock(&table->mtx_prints);
+	timestamp = current_time_ms() - table->start_time;
+	printf("[%lu ms] Philosopher %d %s\n", timestamp, philo_id, status);
+	pthread_mutex_unlock(&table->mtx_prints);
 }

@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 10:50:30 by pmachado          #+#    #+#             */
-/*   Updated: 2025/03/30 19:13:46 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/01 00:26:29 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ int	main(int ac, char **av)
 	printf("✅ Starting philosopher threads...\n");
 	if (start_threads(table))
 		ft_end(3, table);
-	join_threads(table);
 	free_all(table);
 	return (0);
 }

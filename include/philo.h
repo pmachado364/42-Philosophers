@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 10:49:33 by pmachado          #+#    #+#             */
-/*   Updated: 2025/03/31 16:31:28 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/01 00:25:18 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,9 @@ typedef struct s_bigbrain
 	int					id;					//socrates ID number
 	int					meals_eaten;		//number of meal the philosopher had
 	uint64_t			last_meal_time;		//timestamp of the last meal had
+
+	pthread_mutex_t		mtx_fork_state;
+
 	pthread_mutex_t		*left_fork;
 	pthread_mutex_t		*right_fork;
 	pthread_mutex_t		mtx_last_meal_time; //proteccs last_eat_time
@@ -81,16 +84,16 @@ void		philo_drop_forks(t_bigbrain *ph);
 
 /* thread creation and joining */
 int			start_threads(t_table *table);
-void		join_threads(t_table *table);
-void		*check_philos(void *arg);
-int			has_philo_died(t_table *table, int i, uint64_t now);
-void		cycle_turns(t_table *table);
+bool		check_philos(t_table *table);
+bool		has_philo_died(t_table *table, int i);
+bool		check_philo_full(t_bigbrain *philo);
 
 /* utils */
 int			ft_atoi(char *str);
 uint64_t	current_time_ms(void);
-bool		philo_check_death(t_bigbrain *ph);
-void		wait_time(t_bigbrain *ph, uint64_t time);
+bool 		wait_time(t_bigbrain *ph, uint64_t ms);
+bool 		end_simulation(t_table *table);
+void		log_philo_status(t_table *table, int philo_id, char *status);
 
 /* clean-up */
 void		ft_end(int code, t_table *table);

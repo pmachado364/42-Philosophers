@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 16:17:50 by pmachado          #+#    #+#             */
-/*   Updated: 2025/03/31 16:19:01 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/01 00:18:54 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,54 +16,116 @@ void	philo_think(t_bigbrain *ph)
 {
 	if (has_simulation_stopped(ph))
 		return ;
-	printf("[%lu] 🤔 Philosopher %d is thinking.\n", current_time_ms(), ph->id);
+	log_philo_status(ph->table, ph->id, "is thinking 🤔");
 }
 
-void	philo_eat(t_bigbrain *ph)
+void philo_eat(t_bigbrain *ph)
 {
-	pthread_mutex_lock(&ph->mtx_last_meal_time);
-	ph->last_meal_time = current_time_ms();
-	pthread_mutex_unlock(&ph->mtx_last_meal_time);
-	pthread_mutex_lock(&ph->mtx_meals_eaten);
-	ph->meals_eaten++;
-	pthread_mutex_unlock(&ph->mtx_meals_eaten);
-	printf("[%lu] 🍝 Philosopher %d is eating.\n", current_time_ms(), ph->id);
+    if (has_simulation_stopped(ph))
+        return;
+    pthread_mutex_lock(&ph->mtx_last_meal_time);
+    ph->last_meal_time = current_time_ms();
+    pthread_mutex_unlock(&ph->mtx_last_meal_time);
+    pthread_mutex_lock(&ph->mtx_meals_eaten);
+    ph->meals_eaten++;
+    pthread_mutex_unlock(&ph->mtx_meals_eaten);
+    log_philo_status(ph->table, ph->id, "is eating 🍝");
 }
 
 void	philo_sleep(t_bigbrain *ph)
 {
 	if (has_simulation_stopped(ph))
 		return ;
-	printf("[%lu] 😴 Philo %d is sleeping...\n", current_time_ms(), ph->id);
+	log_philo_status(ph->table, ph->id, "is sleeping 😴");
 }
 
-bool	philo_take_forks(t_bigbrain *ph)
+// bool philo_take_forks(t_bigbrain *ph)
+// {
+// 	if (has_simulation_stopped(ph))
+// 		return (false);
+// 	if (ph->id % 2 == 0)
+// 	{
+// 		pthread_mutex_lock(ph->right_fork);
+// 		log_philo_status(ph->table, ph->id, "took the right fork 🍴");
+// 		pthread_mutex_lock(ph->left_fork);
+// 		log_philo_status(ph->table, ph->id, "took the left fork 🍴");
+// 	}
+// 	else
+// 	{
+// 		pthread_mutex_lock(ph->left_fork);
+// 		log_philo_status(ph->table, ph->id, "took the left fork 🍴");
+// 		pthread_mutex_lock(ph->right_fork);
+// 		log_philo_status(ph->table, ph->id, "took the right fork 🍴");
+// 	}
+// 	return (true);
+// }
+
+bool philo_take_forks(t_bigbrain *ph)
 {
+	bool got_left = false;
+	bool got_right = false;
+
 	if (has_simulation_stopped(ph))
 		return (false);
+
 	if (ph->id % 2 == 0)
 	{
+		if (has_simulation_stopped(ph))
+			return (false);
+		printf("🔐 Philo %d locking RIGHT fork (%p)\n", ph->id, (void *)ph->right_fork);
 		pthread_mutex_lock(ph->right_fork);
-		printf("[%lu] 🍴 Philosopher %d took the right fork\n",
-			current_time_ms(), ph->id);
+		got_right = true;
+
+		if (has_simulation_stopped(ph))
+			goto cleanup;
+		log_philo_status(ph->table, ph->id, "took the right fork 🍴");
+
+		if (has_simulation_stopped(ph))
+			goto cleanup;
+		printf("🔐 Philo %d locking LEFT fork (%p)\n", ph->id, (void *)ph->left_fork);
 		pthread_mutex_lock(ph->left_fork);
-		printf("[%lu] 🍴 Philosopher %d took the left fork\n",
-			current_time_ms(), ph->id);
+		got_left = true;
+
+		if (has_simulation_stopped(ph))
+			goto cleanup;
+		log_philo_status(ph->table, ph->id, "took the left fork 🍴");
 	}
 	else
 	{
+		if (has_simulation_stopped(ph))
+			return (false);
+		printf("🔐 Philo %d locking LEFT fork (%p)\n", ph->id, (void *)ph->left_fork);
 		pthread_mutex_lock(ph->left_fork);
-		printf("[%lu] 🍴 Philosopher %d took the left fork\n",
-			current_time_ms(), ph->id);
+		got_left = true;
+
+		if (has_simulation_stopped(ph))
+			goto cleanup;
+		log_philo_status(ph->table, ph->id, "took the left fork 🍴");
+
+		if (has_simulation_stopped(ph))
+			goto cleanup;
+		printf("🔐 Philo %d locking RIGHT fork (%p)\n", ph->id, (void *)ph->right_fork);
 		pthread_mutex_lock(ph->right_fork);
-		printf("[%lu] 🍴 Philosopher %d took the right fork\n",
-			current_time_ms(), ph->id);
+		got_right = true;
+
+		if (has_simulation_stopped(ph))
+			goto cleanup;
+		log_philo_status(ph->table, ph->id, "took the right fork 🍴");
 	}
 	return (true);
+
+cleanup:
+	if (got_left)
+		pthread_mutex_unlock(ph->left_fork);
+	if (got_right)
+		pthread_mutex_unlock(ph->right_fork);
+	return (false);
 }
 
-void	philo_drop_forks(t_bigbrain *ph)
+void philo_drop_forks(t_bigbrain *ph)
 {
 	pthread_mutex_unlock(ph->left_fork);
 	pthread_mutex_unlock(ph->right_fork);
 }
+
+
