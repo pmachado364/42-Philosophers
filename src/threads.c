@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 10:43:14 by pmachado          #+#    #+#             */
-/*   Updated: 2025/03/04 13:42:53 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/03/31 17:12:50 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ int	start_threads(t_table *table)
 	int			i;
 	pthread_t	monitor_thread;
 
+	table->start_time = current_time_ms();
 	i = 0;
 	while (i < table->nbr_thinkers)
 	{
@@ -29,46 +30,8 @@ int	start_threads(t_table *table)
 	if (pthread_create(&monitor_thread, NULL, check_philos, (void *)table) != 0)
 		return (1);
 	pthread_detach(monitor_thread);
-	i = 0;
-	while (i < table->nbr_thinkers)
-	{
-		pthread_join(table->bigbrains[i].thread, NULL);
-		i++;
-	}
 	return (0);
 }
-
-// int	start_threads(t_table *table)
-// {
-// 	int			i;
-// 	pthread_t	monitor_thread;
-
-// 	i = 0;
-// 	while (i < table->nbr_thinkers)
-// 	{
-// 		if (pthread_create(&table->bigbrains[i].thread, NULL,
-// 			philo_behavior, (void *)&table->bigbrains[i]) != 0)
-// 		{
-// 			printf("❌ Failed to create thread for philosopher %d\n", i + 1);
-// 			return (1);
-// 		}
-// 		printf("✅ Thread created for philosopher %d\n", i + 1);
-// 		i++;
-// 	}
-// 	if (pthread_create(&monitor_thread, NULL, check_philos, (void *)table) != 0)
-// 	{
-// 		printf("❌ Failed to create monitoring thread\n");
-// 		return (1);
-// 	}
-// 	pthread_detach(monitor_thread);
-// 	i = 0;
-// 	while (i < table->nbr_thinkers)
-// 	{
-// 		pthread_join(table->bigbrains[i].thread, NULL);
-// 		i++;
-// 	}
-// 	return (0);
-// }
 
 void	join_threads(t_table *table)
 {

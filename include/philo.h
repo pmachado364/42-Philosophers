@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 10:49:33 by pmachado          #+#    #+#             */
-/*   Updated: 2025/03/04 14:05:22 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/03/31 16:31:28 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,10 +68,16 @@ void		ft_init_philos(t_table *table);
 
 /* philos behaviour */
 void		*philo_behavior(void *philo);
+bool		routine(t_bigbrain *ph);
+int			has_simulation_stopped(t_bigbrain *ph);
+void		philo_wait_turn(t_bigbrain *ph);
+
+/* actions */
 void		philo_think(t_bigbrain *ph);
 void		philo_eat(t_bigbrain *ph);
 void		philo_sleep(t_bigbrain *ph);
-void		philo_wait_turn(t_bigbrain *ph);
+bool		philo_take_forks(t_bigbrain *ph);
+void		philo_drop_forks(t_bigbrain *ph);
 
 /* thread creation and joining */
 int			start_threads(t_table *table);
@@ -84,9 +90,7 @@ void		cycle_turns(t_table *table);
 int			ft_atoi(char *str);
 uint64_t	current_time_ms(void);
 bool		philo_check_death(t_bigbrain *ph);
-bool		philo_take_forks(t_bigbrain *ph);
-void		philo_drop_forks(t_bigbrain *ph);
-void		wait_for(t_bigbrain *ph, uint64_t time_to_wait);
+void		wait_time(t_bigbrain *ph, uint64_t time);
 
 /* clean-up */
 void		ft_end(int code, t_table *table);
