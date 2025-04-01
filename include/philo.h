@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 10:49:33 by pmachado          #+#    #+#             */
-/*   Updated: 2025/04/01 17:21:21 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/01 22:33:07 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ typedef struct s_bigbrain
 	int					id;					//socrates ID number
 	int					meals_eaten;		//number of meal the philosopher had
 	uint64_t			last_meal_time;		//timestamp of the last meal had
-
 	pthread_mutex_t		*left_fork;
 	pthread_mutex_t		*right_fork;
 	pthread_mutex_t		mtx_last_meal_time; //proteccs last_eat_time
@@ -88,8 +87,8 @@ bool		check_philo_full(t_bigbrain *philo);
 /* utils */
 int			ft_atoi(char *str);
 uint64_t	current_time_ms(void);
-bool 		wait_time(t_bigbrain *ph, uint64_t ms);
-bool 		end_simulation(t_table *table);
+bool		wait_time(t_bigbrain *ph, uint64_t ms);
+bool		end_simulation(t_table *table);
 void		log_philo_status(t_table *table, int philo_id, char *status);
 
 /* clean-up */

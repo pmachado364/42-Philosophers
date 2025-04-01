@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/14 18:25:05 by pmachado          #+#    #+#             */
-/*   Updated: 2025/04/01 17:38:57 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/01 21:45:41 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ void	ft_init_forks(t_table *table)
 		i++;
 	}
 }
+
 void	ft_init_philos(t_table *table)
 {
 	int	i;

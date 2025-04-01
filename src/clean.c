@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 10:21:33 by pmachado          #+#    #+#             */
-/*   Updated: 2025/04/01 15:46:45 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/01 22:32:17 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,10 @@ void	free_all(t_table *table)
 {
 	if (!table)
 		return ;
-
 	if (table->forks)
 		free_forks(table);
 	if (table->bigbrains)
 		free_bigbrains(table);
-
 	pthread_mutex_destroy(&table->mtx_prints);
 	pthread_mutex_destroy(&table->mtx_simulation);
 	free(table);
@@ -58,8 +56,9 @@ void	free_forks(t_table *table)
 
 void	free_bigbrains(t_table *table)
 {
-	int	i = -1;
+	int	i;
 
+	i = -1;
 	while (++i < table->nbr_thinkers)
 	{
 		pthread_mutex_destroy(&table->bigbrains[i].mtx_last_meal_time);
