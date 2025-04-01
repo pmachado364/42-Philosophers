@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 10:21:33 by pmachado          #+#    #+#             */
-/*   Updated: 2025/04/01 00:39:39 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/01 15:46:45 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,6 @@ void	free_bigbrains(t_table *table)
 	{
 		pthread_mutex_destroy(&table->bigbrains[i].mtx_last_meal_time);
 		pthread_mutex_destroy(&table->bigbrains[i].mtx_meals_eaten);
-		pthread_mutex_destroy(&table->bigbrains[i].mtx_fork_state); // 🔥 Important!
 	}
 	free(table->bigbrains);
 }
