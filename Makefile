@@ -6,7 +6,7 @@
 #    By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/07 10:36:24 by pmachado          #+#    #+#              #
-#    Updated: 2025/02/07 11:23:33 by pmachado         ###   ########.fr        #
+#    Updated: 2025/04/02 10:04:36 by pmachado         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,8 +26,9 @@ ERROR = $(WHITE)[$(RED)❌$(WHITE)] $(RED)
 #==============================================================================#
 
 NAME = philo
-CC = cc
-CFLAGS = -Wall -Wextra -Werror -g
+CC = clang
+SNTZ = -fsanitize=thread
+CFLAGS = -Wall -Wextra -Werror -g $(SNTZ)
 RM = rm -rf
 
 #==============================================================================#
