@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 10:43:14 by pmachado          #+#    #+#             */
-/*   Updated: 2025/04/01 22:45:50 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/04 12:36:23 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ int	start_threads(t_table *table)
 		if (pthread_create(&table->bigbrains[i].thread, NULL,
 				philo_behavior, (void *)&table->bigbrains[i]) != 0)
 			return (1);
-		printf("✅ Thread created for philosopher %d\n", i + 1);
 		i++;
 	}
 	check_philos(table);

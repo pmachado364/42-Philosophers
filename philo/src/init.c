@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/14 18:25:05 by pmachado          #+#    #+#             */
-/*   Updated: 2025/04/01 21:45:41 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/04 12:36:12 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ t_table	*ft_start_dinner(int ac, char **av)
 		ft_end(3, NULL);
 	ft_init_forks(table);
 	ft_init_philos(table);
-	printf("✅ All setup is complete.\n");
 	return (table);
 }
 

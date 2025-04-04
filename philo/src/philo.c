@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 10:50:30 by pmachado          #+#    #+#             */
-/*   Updated: 2025/04/01 15:20:46 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/04 12:36:07 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,7 @@ int	main(int ac, char **av)
 
 	if (!ft_validate(ac, av))
 		exit(1);
-	printf("All good with parsing. Initiating structs\n");
 	table = ft_start_dinner(ac, av);
-	printf("✅ Starting philosopher threads...\n");
 	if (start_threads(table))
 		ft_end(3, table);
 	free_all(table);
