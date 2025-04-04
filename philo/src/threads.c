@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 10:43:14 by pmachado          #+#    #+#             */
-/*   Updated: 2025/04/04 12:36:23 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/04 16:07:03 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ bool	check_philos(t_table *table)
 				return (end_simulation(table), true);
 			if (!table->someone_died && has_philo_died(table, i))
 			{
-				log_philo_status(table, ph->id, "died 💀");
+				log_philo_status(table, ph->id, "died");
 				return (end_simulation(table), true);
 			}
 		}
