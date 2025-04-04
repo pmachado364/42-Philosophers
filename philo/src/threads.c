@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 10:43:14 by pmachado          #+#    #+#             */
-/*   Updated: 2025/04/04 16:07:03 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/04 19:40:57 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,30 +40,50 @@ bool	check_philos(t_table *table)
 {
 	int			i;
 	int			full_philos;
+	uint64_t	last;
+	uint64_t	now;
+	uint64_t	time_since_meal;
+	uint64_t	max_time = 0;
+	int			starving_id = -1;
 	t_bigbrain	*ph;
 
 	while (1)
 	{
 		i = -1;
 		full_philos = 0;
+		max_time = 0;
+		starving_id = -1;
+		now = current_time_ms();
 		while (++i < table->nbr_thinkers)
 		{
 			ph = &table->bigbrains[i];
+
 			if (table->must_eat_count > 0 && check_philo_full(ph))
 				full_philos++;
-			if (full_philos == table->nbr_thinkers && table->must_eat_count > 0)
-				return (end_simulation(table), true);
+			pthread_mutex_lock(&ph->mtx_last_meal_time);
+			last = ph->last_meal_time;
+			pthread_mutex_unlock(&ph->mtx_last_meal_time);
+			time_since_meal = now - last;
+			if (time_since_meal > max_time)
+			{
+				max_time = time_since_meal;
+				starving_id = ph->id;
+			}
 			if (!table->someone_died && has_philo_died(table, i))
 			{
 				log_philo_status(table, ph->id, "died");
 				return (end_simulation(table), true);
 			}
 		}
+		if (table->must_eat_count > 0 && full_philos == table->nbr_thinkers)
+			return (end_simulation(table), true);
+		pthread_mutex_lock(&table->mtx_priority);
+		table->most_starving_id = starving_id;
+		pthread_mutex_unlock(&table->mtx_priority);
 		usleep(500);
 	}
 	return (true);
 }
-
 bool	has_philo_died(t_table *table, int i)
 {
 	uint64_t	now;

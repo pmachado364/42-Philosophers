@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 10:49:33 by pmachado          #+#    #+#             */
-/*   Updated: 2025/04/01 22:33:07 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/04 20:11:46 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ typedef struct s_bigbrain
 {
 	int					id;					//socrates ID number
 	int					meals_eaten;		//number of meal the philosopher had
+	bool 				has_eaten_once;
 	uint64_t			last_meal_time;		//timestamp of the last meal had
 	pthread_mutex_t		*left_fork;
 	pthread_mutex_t		*right_fork;
@@ -46,6 +47,10 @@ typedef struct s_table
 	int					time_to_eat;		//eat duration
 	int					time_to_sleep;		//sleep duration
 	int					must_eat_count;		//Opt: Nbr meals before stopping
+
+	int 				most_starving_id;
+	pthread_mutex_t 	mtx_priority;
+
 	uint64_t			start_time;			//referemce start time
 	bool				someone_died;		//flag to indicate if a philo died
 	pthread_mutex_t		*forks;				//array of forks
@@ -90,6 +95,8 @@ uint64_t	current_time_ms(void);
 bool		wait_time(t_bigbrain *ph, uint64_t ms);
 bool		end_simulation(t_table *table);
 void		log_philo_status(t_table *table, int philo_id, char *status);
+
+bool		is_starving(t_bigbrain *ph);
 
 /* clean-up */
 void		ft_end(int code, t_table *table);

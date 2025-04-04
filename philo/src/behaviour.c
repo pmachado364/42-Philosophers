@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 09:48:33 by pmachado          #+#    #+#             */
-/*   Updated: 2025/04/04 12:36:36 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/04 20:14:50 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ void	*philo_behavior(void *philo)
 		pthread_mutex_unlock(&ph->table->mtx_simulation);
 		return (NULL);
 	}
+
 	while (!has_simulation_stopped(ph))
 	{
 		if (!routine(ph))
@@ -37,24 +38,52 @@ void	*philo_behavior(void *philo)
 
 bool	routine(t_bigbrain *ph)
 {
+	int		priority_id;
+
 	if (has_simulation_stopped(ph))
 		return (false);
+
+	if (ph->has_eaten_once)
+	{
+		while (true)
+		{
+			pthread_mutex_lock(&ph->table->mtx_priority);
+			priority_id = ph->table->most_starving_id;
+			pthread_mutex_unlock(&ph->table->mtx_priority);
+
+			if (priority_id == -1 || priority_id == ph->id)
+				break;
+
+			if (has_simulation_stopped(ph))
+				return (false);
+
+			usleep(100);
+		}
+	}
+
 	if (!philo_take_forks(ph))
 		return (false);
+
 	philo_eat(ph);
+
 	if (wait_time(ph, ph->table->time_to_eat))
 	{
 		philo_drop_forks(ph);
 		return (false);
 	}
 	philo_drop_forks(ph);
+
 	if (has_simulation_stopped(ph))
 		return (false);
+
 	philo_sleep(ph);
+
 	if (wait_time(ph, ph->table->time_to_sleep))
 		return (false);
+
 	if (has_simulation_stopped(ph))
 		return (false);
+
 	philo_think(ph);
 	usleep(500);
 	return (true);

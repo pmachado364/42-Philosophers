@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/14 18:25:05 by pmachado          #+#    #+#             */
-/*   Updated: 2025/04/04 12:36:12 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/04 20:12:01 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,15 @@ t_table	*ft_init_table(int ac, char **av)
 		table->must_eat_count = ft_atoi(av[5]);
 	else
 		table->must_eat_count = -1;
+	
+	table->most_starving_id = 0;
 	table->someone_died = false;
 	table->start_time = current_time_ms();
 	table->bigbrains = NULL;
 	table->forks = NULL;
 	if ((pthread_mutex_init(&table->mtx_prints, NULL))
-		|| (pthread_mutex_init(&table->mtx_simulation, NULL)))
+		|| (pthread_mutex_init(&table->mtx_simulation, NULL))
+		|| (pthread_mutex_init(&table->mtx_priority, NULL)))
 		ft_end(3, table);
 	return (table);
 }
@@ -81,6 +84,7 @@ void	ft_init_philos(t_table *table)
 	{
 		table->bigbrains[i].id = i + 1;
 		table->bigbrains[i].meals_eaten = 0;
+		table->bigbrains[i].has_eaten_once = false;
 		table->bigbrains[i].last_meal_time = table->start_time;
 		table->bigbrains[i].table = table;
 		table->bigbrains[i].left_fork = &table->forks[i];

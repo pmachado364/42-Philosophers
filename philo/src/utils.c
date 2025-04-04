@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 10:32:09 by pmachado          #+#    #+#             */
-/*   Updated: 2025/04/04 17:59:17 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/04 19:20:14 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,13 +68,30 @@ void	log_philo_status(t_table *table, int philo_id, char *status)
 bool	wait_time(t_bigbrain *ph, uint64_t ms)
 {
 	uint64_t	start;
+	uint64_t	elapsed;
 
 	start = current_time_ms();
-	while ((current_time_ms() - start) < ms)
+	while (true)
 	{
 		if (has_simulation_stopped(ph))
 			return (true);
-		usleep(100);
+		elapsed = current_time_ms() - start;
+		if (elapsed >= ms)
+			break;
+		usleep(100); // shorter interval = more responsive
 	}
 	return (false);
+}
+
+bool	is_starving(t_bigbrain *ph)
+{
+	uint64_t	now;
+	uint64_t	last_meal;
+
+	now = current_time_ms();
+	pthread_mutex_lock(&ph->mtx_last_meal_time);
+	last_meal = ph->last_meal_time;
+	pthread_mutex_unlock(&ph->mtx_last_meal_time);
+
+	return (now - last_meal >= (uint64_t)(ph->table->time_to_die * 3 / 4));
 }
