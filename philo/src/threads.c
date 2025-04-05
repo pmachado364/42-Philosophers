@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 10:43:14 by pmachado          #+#    #+#             */
-/*   Updated: 2025/04/04 16:07:03 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/05 14:44:50 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	start_threads(t_table *table)
 		i++;
 	}
 	check_philos(table);
-	usleep(1000);
+	usleep(500);
 	i = 0;
 	while (i < table->nbr_thinkers)
 	{

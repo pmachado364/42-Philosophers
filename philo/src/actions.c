@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 16:17:50 by pmachado          #+#    #+#             */
-/*   Updated: 2025/04/04 12:37:12 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/05 14:44:36 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,16 +46,16 @@ bool	philo_take_forks(t_bigbrain *ph)
 	if (ph->id % 2 == 0)
 	{
 		pthread_mutex_lock(ph->right_fork);
-		log_philo_status(ph->table, ph->id, "took the right fork");
+		log_philo_status(ph->table, ph->id, "has taken a fork");
 		pthread_mutex_lock(ph->left_fork);
-		log_philo_status(ph->table, ph->id, "took the left fork");
+		log_philo_status(ph->table, ph->id, "has taken a fork");
 	}
 	else
 	{
 		pthread_mutex_lock(ph->left_fork);
-		log_philo_status(ph->table, ph->id, "took the left fork");
+		log_philo_status(ph->table, ph->id, "has taken a fork");
 		pthread_mutex_lock(ph->right_fork);
-		log_philo_status(ph->table, ph->id, "took the right fork");
+		log_philo_status(ph->table, ph->id, "has taken a fork");
 	}
 	if (has_simulation_stopped(ph))
 	{

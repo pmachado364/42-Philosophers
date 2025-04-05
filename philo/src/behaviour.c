@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 09:48:33 by pmachado          #+#    #+#             */
-/*   Updated: 2025/04/04 12:36:36 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/05 14:44:18 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,12 @@ void	*philo_behavior(void *philo)
 	t_bigbrain	*ph;
 
 	ph = (t_bigbrain *)philo;
+	if (ph->id % 2 == 0)
+		usleep(100);
 	if (ph->table->nbr_thinkers == 1)
 	{
-		log_philo_status(ph->table, ph->id, "took a fork");
+		log_philo_status(ph->table, ph->id, "has taken a fork");
 		usleep(ph->table->time_to_die * 1000);
-		printf("[💔] Philo %d died alone with no one to talk to.\n", ph->id);
 		pthread_mutex_lock(&ph->table->mtx_simulation);
 		ph->table->someone_died = true;
 		pthread_mutex_unlock(&ph->table->mtx_simulation);

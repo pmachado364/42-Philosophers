@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 10:32:09 by pmachado          #+#    #+#             */
-/*   Updated: 2025/04/04 17:59:17 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/05 13:58:10 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void	log_philo_status(t_table *table, int philo_id, char *status)
 		table->someone_died = true;
 	pthread_mutex_unlock(&table->mtx_simulation);
 	pthread_mutex_lock(&table->mtx_prints);
-	timestamp = current_time_ms() - table->start_time;
+	timestamp = (current_time_ms() - table->start_time) + 1;
 	printf("%lu %d %s\n", timestamp, philo_id, status);
 	pthread_mutex_unlock(&table->mtx_prints);
 }
