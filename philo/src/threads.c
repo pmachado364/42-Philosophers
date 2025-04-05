@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 10:43:14 by pmachado          #+#    #+#             */
-/*   Updated: 2025/04/04 19:40:57 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/05 13:37:28 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,45 +38,25 @@ int	start_threads(t_table *table)
 
 bool	check_philos(t_table *table)
 {
-	int			i;
 	int			full_philos;
-	uint64_t	last;
 	uint64_t	now;
-	uint64_t	time_since_meal;
-	uint64_t	max_time = 0;
-	int			starving_id = -1;
-	t_bigbrain	*ph;
+	int			starving_id;
+	int			i;
 
 	while (1)
 	{
-		i = -1;
 		full_philos = 0;
-		max_time = 0;
-		starving_id = -1;
+		i = -1;
 		now = current_time_ms();
 		while (++i < table->nbr_thinkers)
-		{
-			ph = &table->bigbrains[i];
-
-			if (table->must_eat_count > 0 && check_philo_full(ph))
+			if (table->must_eat_count > 0
+				&& check_philo_full(&table->bigbrains[i]))
 				full_philos++;
-			pthread_mutex_lock(&ph->mtx_last_meal_time);
-			last = ph->last_meal_time;
-			pthread_mutex_unlock(&ph->mtx_last_meal_time);
-			time_since_meal = now - last;
-			if (time_since_meal > max_time)
-			{
-				max_time = time_since_meal;
-				starving_id = ph->id;
-			}
-			if (!table->someone_died && has_philo_died(table, i))
-			{
-				log_philo_status(table, ph->id, "died");
-				return (end_simulation(table), true);
-			}
-		}
 		if (table->must_eat_count > 0 && full_philos == table->nbr_thinkers)
 			return (end_simulation(table), true);
+		if (check_any_philo_died(table))
+			return (true);
+		starving_id = update_starving_id(table, now);
 		pthread_mutex_lock(&table->mtx_priority);
 		table->most_starving_id = starving_id;
 		pthread_mutex_unlock(&table->mtx_priority);
@@ -84,26 +64,29 @@ bool	check_philos(t_table *table)
 	}
 	return (true);
 }
-bool	has_philo_died(t_table *table, int i)
+
+int	update_starving_id(t_table *table, uint64_t now)
 {
-	uint64_t	now;
-	uint64_t	last_meal;
+	int			i;
+	uint64_t	last;
+	uint64_t	time_since;
+	uint64_t	max;
+	int			id;
 
-	now = current_time_ms();
-	pthread_mutex_lock(&table->bigbrains[i].mtx_last_meal_time);
-	last_meal = table->bigbrains[i].last_meal_time;
-	pthread_mutex_unlock(&table->bigbrains[i].mtx_last_meal_time);
-	if (now - last_meal >= (uint64_t)table->time_to_die)
-		return (true);
-	return (false);
-}
-
-bool	check_philo_full(t_bigbrain *philo)
-{
-	bool	is_full;
-
-	pthread_mutex_lock(&philo->mtx_meals_eaten);
-	is_full = (philo->meals_eaten >= philo->table->must_eat_count);
-	pthread_mutex_unlock(&philo->mtx_meals_eaten);
-	return (is_full);
+	i = -1;
+	max = 0;
+	id = -1;
+	while (++i < table->nbr_thinkers)
+	{
+		pthread_mutex_lock(&table->bigbrains[i].mtx_last_meal_time);
+		last = table->bigbrains[i].last_meal_time;
+		pthread_mutex_unlock(&table->bigbrains[i].mtx_last_meal_time);
+		time_since = now - last;
+		if (time_since > max)
+		{
+			max = time_since;
+			id = table->bigbrains[i].id;
+		}
+	}
+	return (id);
 }

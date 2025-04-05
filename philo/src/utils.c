@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 10:32:09 by pmachado          #+#    #+#             */
-/*   Updated: 2025/04/04 19:20:14 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/05 12:47:12 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	log_philo_status(t_table *table, int philo_id, char *status)
 
 	pthread_mutex_lock(&table->mtx_simulation);
 	is_death = (status[0] == 'd' && status[1] == 'i'
-		&& status[2] == 'e' && status[3] == 'd');
+			&& status[2] == 'e' && status[3] == 'd');
 	if (table->someone_died && !is_death)
 	{
 		pthread_mutex_unlock(&table->mtx_simulation);
@@ -77,21 +77,8 @@ bool	wait_time(t_bigbrain *ph, uint64_t ms)
 			return (true);
 		elapsed = current_time_ms() - start;
 		if (elapsed >= ms)
-			break;
-		usleep(100); // shorter interval = more responsive
+			break ;
+		usleep(100);
 	}
 	return (false);
-}
-
-bool	is_starving(t_bigbrain *ph)
-{
-	uint64_t	now;
-	uint64_t	last_meal;
-
-	now = current_time_ms();
-	pthread_mutex_lock(&ph->mtx_last_meal_time);
-	last_meal = ph->last_meal_time;
-	pthread_mutex_unlock(&ph->mtx_last_meal_time);
-
-	return (now - last_meal >= (uint64_t)(ph->table->time_to_die * 3 / 4));
 }

@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/14 18:25:05 by pmachado          #+#    #+#             */
-/*   Updated: 2025/04/04 20:12:01 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/05 12:50:37 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ t_table	*ft_init_table(int ac, char **av)
 		table->must_eat_count = ft_atoi(av[5]);
 	else
 		table->must_eat_count = -1;
-	
 	table->most_starving_id = 0;
 	table->someone_died = false;
 	table->start_time = current_time_ms();

@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/07 10:49:33 by pmachado          #+#    #+#             */
-/*   Updated: 2025/04/04 20:11:46 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/05 13:43:35 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ typedef struct s_bigbrain
 {
 	int					id;					//socrates ID number
 	int					meals_eaten;		//number of meal the philosopher had
-	bool 				has_eaten_once;
+	bool				has_eaten_once;
 	uint64_t			last_meal_time;		//timestamp of the last meal had
 	pthread_mutex_t		*left_fork;
 	pthread_mutex_t		*right_fork;
@@ -47,10 +47,8 @@ typedef struct s_table
 	int					time_to_eat;		//eat duration
 	int					time_to_sleep;		//sleep duration
 	int					must_eat_count;		//Opt: Nbr meals before stopping
-
-	int 				most_starving_id;
-	pthread_mutex_t 	mtx_priority;
-
+	int					most_starving_id;
+	pthread_mutex_t		mtx_priority;
 	uint64_t			start_time;			//referemce start time
 	bool				someone_died;		//flag to indicate if a philo died
 	pthread_mutex_t		*forks;				//array of forks
@@ -75,6 +73,9 @@ void		init_philo_mutexes(t_bigbrain *ph, int i, t_table *table);
 void		*philo_behavior(void *philo);
 bool		routine(t_bigbrain *ph);
 int			has_simulation_stopped(t_bigbrain *ph);
+bool		handle_priority(t_bigbrain *ph);
+bool		handle_meal(t_bigbrain *ph);
+bool		handle_rest(t_bigbrain *ph);
 
 /* actions */
 void		philo_think(t_bigbrain *ph);
@@ -88,6 +89,8 @@ int			start_threads(t_table *table);
 bool		check_philos(t_table *table);
 bool		has_philo_died(t_table *table, int i);
 bool		check_philo_full(t_bigbrain *philo);
+bool		check_any_philo_died(t_table *table);
+int			update_starving_id(t_table *table, uint64_t now);
 
 /* utils */
 int			ft_atoi(char *str);
@@ -95,8 +98,6 @@ uint64_t	current_time_ms(void);
 bool		wait_time(t_bigbrain *ph, uint64_t ms);
 bool		end_simulation(t_table *table);
 void		log_philo_status(t_table *table, int philo_id, char *status);
-
-bool		is_starving(t_bigbrain *ph);
 
 /* clean-up */
 void		ft_end(int code, t_table *table);
