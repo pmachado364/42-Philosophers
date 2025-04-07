@@ -6,7 +6,7 @@
 #    By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/07 10:36:24 by pmachado          #+#    #+#              #
-#    Updated: 2025/04/02 10:04:36 by pmachado         ###   ########.fr        #
+#    Updated: 2025/04/07 17:49:14 by pmachado         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,10 +26,11 @@ ERROR = $(WHITE)[$(RED)❌$(WHITE)] $(RED)
 #==============================================================================#
 
 NAME = philo
-CC = clang
-SNTZ = -fsanitize=thread
-CFLAGS = -Wall -Wextra -Werror -g $(SNTZ)
+CC = cc
 RM = rm -rf
+
+CFLAGS = -Wall -Wextra -Werror -g
+SNTZ = -fsanitize=thread
 
 #==============================================================================#
 #                                    Paths                                     #
@@ -39,8 +40,19 @@ SRC_DIR = src
 OBJ_DIR = obj
 INC_DIR = include
 
-SRC = $(wildcard $(SRC_DIR)/*.c)
-OBJ = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC))
+#SRC = $(wildcard $(SRC_DIR)/*.c)
+#OBJ = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC))
+SRCS = $(SRC_DIR)/philo.c \
+	   $(SRC_DIR)/actions.c \
+	   $(SRC_DIR)/behaviour.c \
+	   $(SRC_DIR)/clean.c \
+	   $(SRC_DIR)/init.c \
+	   $(SRC_DIR)/parsing.c \
+	   $(SRC_DIR)/threads.c \
+	   $(SRC_DIR)/utils.c \
+	   $(SRC_DIR)/utils_2.c \
+	   
+OBJ = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 INC = -I$(INC_DIR) -I.
 
 #==============================================================================#
@@ -60,6 +72,11 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
 $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)
 
+san: $(OBJ)
+	@echo "Linking $(NAME) with ThreadSanitizer..."
+	@$(CC) $(CFLAGS) $(SNTZ) $(INC) -o $(NAME) $(OBJ)
+	@echo "Sanitized binary built."
+
 clean:
 	@rm -rf $(OBJ_DIR)
 
@@ -69,4 +86,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re san
