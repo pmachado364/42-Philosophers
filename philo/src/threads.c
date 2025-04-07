@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 10:43:14 by pmachado          #+#    #+#             */
-/*   Updated: 2025/04/05 13:37:28 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/07 14:16:31 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,9 @@ int	start_threads(t_table *table)
 bool	check_philos(t_table *table)
 {
 	int			full_philos;
-	uint64_t	now;
 	int			starving_id;
 	int			i;
+	uint64_t	now;
 
 	while (1)
 	{
@@ -68,15 +68,15 @@ bool	check_philos(t_table *table)
 int	update_starving_id(t_table *table, uint64_t now)
 {
 	int			i;
+	int			id;
 	uint64_t	last;
 	uint64_t	time_since;
 	uint64_t	max;
-	int			id;
 
-	i = -1;
+	i = 0;
 	max = 0;
-	id = -1;
-	while (++i < table->nbr_thinkers)
+	id = 0;
+	while (i < table->nbr_thinkers)
 	{
 		pthread_mutex_lock(&table->bigbrains[i].mtx_last_meal_time);
 		last = table->bigbrains[i].last_meal_time;
@@ -87,6 +87,9 @@ int	update_starving_id(t_table *table, uint64_t now)
 			max = time_since;
 			id = table->bigbrains[i].id;
 		}
+		i++;
 	}
+	if (max < 50)
+		return (-1);
 	return (id);
 }

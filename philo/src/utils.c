@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 10:32:09 by pmachado          #+#    #+#             */
-/*   Updated: 2025/04/05 12:47:12 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/07 12:44:11 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,17 +46,17 @@ bool	end_simulation(t_table *table)
 void	log_philo_status(t_table *table, int philo_id, char *status)
 {
 	uint64_t	timestamp;
-	bool		is_death;
+	bool		is_dead;
 
 	pthread_mutex_lock(&table->mtx_simulation);
-	is_death = (status[0] == 'd' && status[1] == 'i'
+	is_dead = (status[0] == 'd' && status[1] == 'i'
 			&& status[2] == 'e' && status[3] == 'd');
-	if (table->someone_died && !is_death)
+	if (table->someone_died && !is_dead)
 	{
 		pthread_mutex_unlock(&table->mtx_simulation);
 		return ;
 	}
-	if (is_death)
+	if (is_dead)
 		table->someone_died = true;
 	pthread_mutex_unlock(&table->mtx_simulation);
 	pthread_mutex_lock(&table->mtx_prints);

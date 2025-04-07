@@ -6,7 +6,7 @@
 /*   By: pmachado <pmachado@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 13:33:20 by pmachado          #+#    #+#             */
-/*   Updated: 2025/04/05 13:43:49 by pmachado         ###   ########.fr       */
+/*   Updated: 2025/04/07 15:08:34 by pmachado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,6 @@ bool	handle_rest(t_bigbrain *ph)
 	if (has_simulation_stopped(ph))
 		return (false);
 	philo_think(ph);
-	usleep(500);
+	usleep(100);
 	return (true);
 }
